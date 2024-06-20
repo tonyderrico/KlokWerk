@@ -36,4 +36,9 @@ kw_log_scaled[15:258] = kw_log_scaled[15:258] + 1
 
 kw_log_scaled[15:258] = scale(kw_log_scaled[15:258])
 
-table(Baseline$watchTV_before_sleep_cat)
+kwtot = merge(Baseline,kw,by='subjectid')
+kwtot$employment_status = ifelse(is.na(kwtot$employment_status),
+                                 kwtot$employment_status1,
+                                 kwtot$employment_status)
+table(kwtot$employment_status2)
+kwtot$employment_status1 = NULL
