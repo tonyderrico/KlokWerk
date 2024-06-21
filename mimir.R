@@ -16,7 +16,7 @@ data("PARAM_metaboAge")
 kw$M.VLDL.P = as.numeric(kw$M.VLDL.P)
 table(kw$nightshifts_monthly)
 
-kw_ms = kw %>%
+kw_ms = kw %>% filter(nightshift)
   select(XXL.VLDL.L,VLDL.D,S.HDL.L,PUFA.FA,Glc,Lac,His,
                       Ile,Leu,Val,Phe,AcAce,Alb,Gp)
 names(kw_ms)[1:14] = c("xxl_vldl_l",'vldl_d','s_hdl_l','pufa_fa','glc','lac',
@@ -33,6 +33,8 @@ mean(x1$mortScore, na.rm = TRUE)
 max(x1$mortScore, na.rm = TRUE)
 mean(x$mortScore,na.rm=TRUE)
 sd(x$mortScore,na.rm = TRUE)
+
+write.csv(x1$mortScore,file='C:/Users/DErr001/OneDrive - Universiteit Utrecht/Documents/meanMS.csv')
 
 #risk of severe covid19
 kw_cs = kw %>% filter(nightshift==2) %>%
