@@ -1,6 +1,6 @@
 library(MiMIR)
 library(dplyr)
-library(splines)
+library(splines) 
 
 #datasets from MIMIR
 data("covid_betas")
