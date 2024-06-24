@@ -1,7 +1,7 @@
 library(MiMIR)
 library(dplyr)
 library(splines) 
-
+ 
 #datasets from MIMIR
 data("covid_betas")
 data("CVD_score_betas")
