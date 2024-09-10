@@ -71,12 +71,16 @@
 # to selectivity and median earnings.
 
 ### No PSA, just regression (in this case ANCOVA)
+df=kwtot2 %>% dplyr::select(controle.x,shift_sample.x,mortScore_orig,mortScoredic,
+                     metabAge,total_years_working_night_shifts,employment_status,
+                     working_hours_contract,subjectid.y)
+df=na.omit(df)
 
-mod_test1<- glm(as.factor(df$controle) ~ 
+mod_test1<- glm(as.factor(df$controle.x) ~ 
                   employment_status+
                   total_years_working_night_shifts +
                   working_hours_contract,
-                data = kwtot,
+                data = df,
                 family="binomial")
 
 # check covariate signifcance in predicting
@@ -100,7 +104,7 @@ library(MatchIt)
 # Note. Arguent defaults may change when adjusting other
 # arguments.
 
-psa_n<-matchit(as.factor(df$shift_sample) ~ 
+psa_n<-matchit(as.factor(df$shift_sample.x) ~ 
                  employment_status+
                  total_years_working_night_shifts +
                  working_hours_contract,
@@ -133,7 +137,7 @@ summary(psa_n)
 ### Optimal Pair Matching (OPM; method="optimal")
 # Specfic arguments in matchit(): ratio 
 
-psa_o<-matchit(as.factor(df$shift_sample) ~ 
+psa_o<-matchit(as.factor(df$shift_sample.x) ~ 
                  employment_status+
                  total_years_working_night_shifts +
                  working_hours_contract,
@@ -168,7 +172,7 @@ psa_o
 # Between ATT and ATC estimad will just adjust 
 # the focal group used to be matched on.
 
-psa_f<-matchit(as.factor(df$shift_sample) ~ 
+psa_f<-matchit(as.factor(df$shift_sample.x) ~ 
                  employment_status+
                  total_years_working_night_shifts +
                  working_hours_contract,
@@ -264,22 +268,13 @@ love.plot(bal.tab(psa_f2),
 psa_f2_dat<-match.data(psa_f)
 
 # PS FM weighted Regression
-mod1 <- lm(MD_EARN_WNE_P10 ~ 
-             selective +
-             MEDIAN_HH_INC+
-             I(MEDIAN_HH_INC^2)+
-             STEM+
-             I(STEM^2)+
-             PCTPELL+
-             I(PCTPELL^2)+
-             UG25ABV+
-             I(UG25ABV^2), 
-           data = psa_f2_dat,
-           weights=weights)
-
+mod1 <- lm(metabAge ~ 
+                   total_years_working_night_shifts +
+             weights,
+           data = psa_f2_dat)
+names(psa_f2_dat)
 # ATE for selective
 summary(mod1)
-
 
 #######################################################################
 ##### Compare to not using PSA

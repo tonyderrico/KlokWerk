@@ -1,7 +1,4 @@
-library(MiMIR)
-library(dplyr)
-library(splines) 
- 
+
 #datasets from MIMIR
 data("covid_betas")
 data("CVD_score_betas")
@@ -66,3 +63,4 @@ kw_met = kw_diab[1:4]
 kw_phe = kw_diab[5:8]
 
 table(kw$nightshifts_monthly)
+
