@@ -1,0 +1,15 @@
+#datasets
+
+Baseline (covariates)
+kw (metabolome)
+kwtot (kw+baseline, total shift samples with repeats)
+kwtot2 (with shiftsamples with no repeats)
+kwtot_plots (for plots)
+
+
+
+options(
+  datadist=NULL,
+  prType='html'
+)
+dd <- datadist(kwtot2); options(datadist='dd')
