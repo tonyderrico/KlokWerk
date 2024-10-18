@@ -5,29 +5,27 @@ bloodpressure_kw1 = bloodpressure_kw %>% group_by(subjectid) %>%
     sbp_1_avg=mean(sbp_1,na.rm=T), 
     sbp_2_avg=mean(sbp_2,na.rm=T),
     sbp_3_avg=mean(sbp_3,na.rm=T))
+
 bloodpressure_kw1 = bloodpressure_kw1 %>% group_by(subjectid) %>%
   mutate(sbp_tot = mean(c(sbp_1_avg, sbp_2_avg, sbp_3_avg), na.rm = TRUE))
 
-kwtot4=left_join(kwtot3,bloodpressure_kw1,by='subjectid')
+write_csv(bloodpressure_kw,'C:/Users/DErr001/OneDrive - Universiteit Utrecht/Desktop/sbp.csv')
+write_csv(total,'C:/Users/DErr001/OneDrive - Universiteit Utrecht/Desktop/total.csv')
 
-names(kwtot4)[533] = 'diabetes'
-
-kw_cvd_met = kwtot4 %>%
+kw_cvd_met = total1 %>%
   dplyr::select(Phe, MUFA.FA, FAw6,DHA)
-kw_cvd_pheno = kwtot4 %>%
-  dplyr::select(sex, sbp_tot, smoking,
+
+kw_cvd_pheno = total1 %>%
+  dplyr::select(sex, sbp_1, smoking,
                 diabetes, blood_pressure_lowering_med,lipidmed,
                 TotCho,HDL.C)
 kw_cvd = data.frame(kw_cvd_met,kw_cvd_pheno)
-kw_cvd = cbind(kw_cvd,kwtot4$CVDscore_quart)
 
 names(kw_cvd_met)[1:4] = c("phe", "mufa_fa", "faw6", "dha")
 names(kw_cvd_pheno)[1:8] = c("sex", "systolic_blood_pressure", "current_smoking", "diabetes",
                              'blood_pressure_lowering_med',"lipidmed","totchol",'hdlchol')
-
-
 cvdscore_off=comp.CVD_score(kw_cvd_met,phen=kw_cvd_pheno, betas = CVD_score_betas)
-kwtot4 = cbind(kwtot4,cvdscore_off)
+total1 = cbind(total1,cvdscore_off)
 
 #quartile variable
 kwtot4$CVDscore_quart = cut(kwtot4$CVD_score, 
@@ -35,7 +33,7 @@ kwtot4$CVDscore_quart = cut(kwtot4$CVD_score,
                             include.lowest = TRUE,
                             labels = FALSE)
 #some models
-m = lm(kwtot4$CVD_score~kwtot4$shift_sample.y)
+m = lm(total1$CVD_score~total1$controle)
 m=glm(kwtot4$CVD_score_dic~kwtot4$shift_sample.y, family = 'binomial')
 m=multinom(as.factor(kwtot4$CVDscore_quart)~as.factor(kwtot4$shift_sample.y))
 m=polr(as.factor(kwtot4$CVDscore_quart) ~ kwtot4$shift_sample.y, method = "logistic")

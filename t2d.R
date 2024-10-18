@@ -1,17 +1,21 @@
 #diabetis score
 
+
 Ahola_Olli_betas[1:3]
-t2dscore_met = kwtot3 %>% dplyr::select(Phe,L.VLDL.CE_., L.HDL.FC)
+t2dscore_met = total %>% dplyr::select(Phe,L.VLDL.CE_., L.HDL.FC)
 names(t2dscore_met)[1:3] = c('phe','l_vldl_ce_percentage','l_hdl_fc')
-t2dscore_pheno = kwtot3 %>% dplyr::select(sex,age,bmi,Glc)
+t2dscore_pheno = total %>% dplyr::select(sex,age,bmimeasured,Glc)
 names(t2dscore_pheno)[1:4] = c('sex','age','BMI','glucose')
+
 comp.T2D_Ahola_Olli(t2dscore_met,phen = t2dscore_pheno,
                     betas = Ahola_Olli_betas)
 t2dscore = comp.T2D_Ahola_Olli(t2dscore_met,phen = t2dscore_pheno,
                                betas = Ahola_Olli_betas)
 
-hist(kwtot3$T2Dscore)
-m=lm(kwtot4$T2Dscore~ kwtot4$shift_sample.y)
+total = cbind(total,t2dscore)
+
+hist(total$T2Dscore)
+m=lm(total$T2Dscore~ total$controle + total$age)
 m=glm(kwtot4$T2Dscore_dic~kwtot4$shift_sample.y, family = 'binomial')
 m=multinom(as.factor(kwtot4$t2diab_quart)~as.factor(kwtot4$shift_sample.y))
 m=rq(T2Dscore~shift_sample.y,tau = c(0.25,0.5,0.75),data=kwtot4)

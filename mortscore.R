@@ -1,8 +1,7 @@
 #mort.score
 
-kwtot$M.VLDL.P = as.numeric(kwtot$M.VLDL.P)
 
-kw_ms = kwtot2 %>% filter(shift_sample.y == 1) %>%
+kw_ms = total %>% 
   dplyr::select(XXL.VLDL.L,VLDL.D,S.HDL.L,PUFA.FA,Glc,Lac,His,
          Ile,Leu,Val,Phe,AcAce,Alb,Gp)
 
@@ -12,20 +11,27 @@ kw_ms = kw_ms[, c('pufa_fa','gp','glc','s_hdl_l',"xxl_vldl_l",'alb','phe','acace
                   'ile', 'vldl_d','leu','val','his','lac')]    
 
 prep_met_for_scores
-x=exp(comp.mort_score(kw_ms))
+x = comp.mort_score(kw_ms)
 mean(x$mortScore, na.rm = TRUE)
 max(x$mortScore, na.rm = TRUE)
 sd(x$mortScore,na.rm = TRUE)
-names(kw)
-table(kw$n_years_nightshift)
 
-m=lm(kwtot4$mortScore_orig~kwtot4$shift_sample.y)
+total = cbind(total,x)
+
+total$controle = as.factor(total$controle)
+
+x= total %>% dplyr::filter(controle==0)
+mean(x$working_hours_contract, na.rm = T)
+m=lm(kwtot4$T2Dscore~kwtot4$weight.x)
+m=glm(kwtot4$mortScore_dic~kwheart_palpitation_problems_dic
 m=glm(kwtot4$mortScore_dic~kwtot4$shift_sample.y, family = 'binomial')
 m=multinom(as.factor(kwtot4$t2diab_quart)~as.factor(kwtot4$shift_sample.y))
 m1=polr(as.factor(kwtot4$mortScore_quart1) ~ kwtot4$shift_sample.y, method = "logistic")
 m =orm(mortScore_quart1 ~ shift_sample.y ,data = kwtot4) #ordinal regression models
 m=rq(mortScore_orig~shift_sample.y,tau = c(0.1,0.25,0.5,0.75,0.9),data=kwtot4)
 m=rq(mortScore_orig~shift_sample.y,tau = 0.5,data=kwtot4)
+m=lmer(mortScore_orig~shift_sample.x + (1|subjectid), data = kwtot4)
+
 kwtot4$mortScore_orig
 exp(c(.10,0.06,.13))
 summary(m)
@@ -70,3 +76,4 @@ table(shift_samples$shift_sample)
 
 xx=kwtot %>% filter(mortScore_quart == 1)
 mean(xx$productive_working_hours, na.rm = T)
+

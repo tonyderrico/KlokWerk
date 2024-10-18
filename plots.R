@@ -1,6 +1,19 @@
-kwtot_plot = kwtot2[!is.na(kwtot2$shift_sample.y), ]
+#filtering subject with repeats 
+subject_counts <- kwtot4 %>%
+  group_by(subjectid) %>%
+  summarise(count = n()) %>%
+  filter(count > 1) 
+kwtot4_filtered <- kwtot4 %>%
+  filter(subjectid %in% subject_counts$subjectid)
 
-ggplot(kwtot2, aes(x = CVD_score , fill = factor(shift_sample.y))) +
+kwtot4group = kwtot4_filtered %>% select(subjectid,mortScore_exp,CVD_score,
+                               metaboage,T2Dscore) %>%
+                               group_by(subjectid) %>% group_split()
+
+#------------------------------------------------------------------------------
+#pdf
+
+ggplot(kwtot4, aes(x = CVD_score , fill = factor(shift_sample.y))) +
     geom_density(alpha = 0.2) +
     labs(
       x = "CVD score",
@@ -8,6 +21,15 @@ ggplot(kwtot2, aes(x = CVD_score , fill = factor(shift_sample.y))) +
       fill= ''
     ) +
     theme_dark()
+
+par(mfrow = c(2,2))
+
+plot(density(kwtot4$mortScore, na.rm=T))
+plot(density(kwtot4$CVD_score, na.rm = T))
+plot(density(kwtot4$T2Dscore, na.rm = T))
+plot(density(kwtot4$metaboage, na.rm = T))
+
+#check corr between scores
 
 ggplot(kwtot4, aes(x=mortScore_exp, y=CVD_score)) +
   geom_point() + 
@@ -18,15 +40,17 @@ ggplot(kwtot2, aes(x=CVD_score, y=metabAge)) +
 geom_smooth(method=lm)
 
 
-ggplot(kwtot_plot, aes(x = workload_night, fill = factor(shift_sample.y))) +
-  geom_density(alpha = 0.2) +
+ggplot(kwtot4_filtered, aes(x = subjectid, y = mortScore)) +
+  geom_boxplot(alpha = 0.1) +
   labs(
-    x = "",
-    y = "PDF",
+    x = "workers with repeated measurements",
+    y = "mortscore",
     fill= ''
   ) +
-  theme_dark()
-
+  theme_dark() +
+  theme(
+    axis.text.x = element_blank(),   # Remove x-axis text
+    axis.ticks.x = element_blank())  # Remove x-axis ticks
 #quantile regress
 qreg_25=rq(mortScore_orig~shift_sample.y,tau = c(0.25),data=kwtot4)
 qreg_50=rq(mortScore_orig~shift_sample.y,tau = c(0.5),data=kwtot4)
