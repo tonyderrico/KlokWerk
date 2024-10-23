@@ -30,7 +30,11 @@ library('ggjoy')
 library(palmerpenguins)
 library('GPArotation')
 library('pheatmap')
-library(reshape2)        
+library(reshape2)    
+library('tidymodels')
+library('lares')
+library(ggpubr)
+
 
 conflict_prefer("filter", "dplyr", quiet = TRUE)
 conflict_prefer("select", "dplyr", quiet = TRUE)

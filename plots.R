@@ -13,21 +13,105 @@ kwtot4group = kwtot4_filtered %>% select(subjectid,mortScore_exp,CVD_score,
 #------------------------------------------------------------------------------
 #pdf
 
-ggplot(kwtot4, aes(x = CVD_score , fill = factor(shift_sample.y))) +
-    geom_density(alpha = 0.2) +
-    labs(
-      x = "CVD score",
-      y = "PDF",
-      fill= ''
-    ) +
-    theme_dark()
-
 par(mfrow = c(2,2))
 
-plot(density(kwtot4$mortScore, na.rm=T))
-plot(density(kwtot4$CVD_score, na.rm = T))
-plot(density(kwtot4$T2Dscore, na.rm = T))
-plot(density(kwtot4$metaboage, na.rm = T))
+
+subtotplot = subtot %>% select(mortScore, MetaboAge,CVD_score,MVPA,totaalkcal,sleephr,productive_working_hours,shift_dic,
+                               bmimeasured,chrono)
+varnames = names(subtotplot)
+
+
+plots = lapply(varnames[1:7],function(variable) {
+  ggplot(subtotplot, aes(x = get(variable), fill = factor(shift_dic))) +
+    geom_density(alpha = 0.2) +
+    labs(
+      x = variable,
+      y = "PDF",
+      fill = '') 
+  })
+
+
+
+cvd_pl = ggplot(subtotplot, aes(x = CVD_score, fill = factor(shift_dic))) +
+    geom_density(alpha = 0.2) +
+    labs(x = 'CVD score',y = "",fill = '') + 
+   scale_x_continuous(limits = c(5.5,23.5))
+ 
+mort_score = ggplot(subtotplot, aes(x = mortScore, fill = factor(shift_dic))) +
+   geom_density(alpha = 0.2) +
+   labs(
+     x = 'Mortality Score',
+     y = "",
+     fill = '') +
+   scale_x_continuous() +
+  scale_x_continuous(limits = c(-1.5,2))
+
+metabage_plot= ggplot(subtotplot, aes(x = MetaboAge, fill = factor(shift_dic))) +
+   geom_density(alpha = 0.2) +
+   labs(
+     x = 'Metabolic Age',
+     y = "",
+     fill = '') +
+   scale_x_continuous(limits = c(28,88))
+ 
+prowh_plot = ggplot(subtotplot, aes(x = productive_working_hours, fill = factor(shift_dic))) +
+   geom_density(alpha = 0.2) +
+   labs(
+     x = 'Working Hours',
+     y = "",
+     fill = '') +
+   scale_x_continuous(limits = c(13,50))
+
+MVPAplot = ggplot(subtotplot, aes(x = MVPA, fill = factor(shift_dic))) +
+  geom_density(alpha = 0.2) +
+  labs(
+    x = 'MVPA',
+    y = "",
+    fill = '') +
+  scale_x_continuous(limits = c(-20,140))
+
+totkalplot = ggplot(subtotplot, aes(x =totaalkcal , fill = factor(shift_dic))) +
+  geom_density(alpha = 0.2) +
+  labs(
+    x = 'Total Caloric Intake (mean/24 hr)',
+    y = "",
+    fill = '') +
+  scale_x_continuous(limits = c(50,5000))
+
+sleephrplot = ggplot(subtotplot, aes(x =sleephr , fill = factor(shift_dic))) +
+  geom_density(alpha = 0.2) +
+  labs(
+    x = 'Sleep Hours',
+    y = "",
+    fill = '') +
+  scale_x_continuous(limits = c(3,11))
+
+bmiplot = ggplot(subtotplot, aes(x = bmimeasured , fill = factor(shift_dic))) +
+  geom_density(alpha = 0.2) +
+  labs(
+    x = 'BMI',
+    y = "",
+    fill = '') +
+  scale_x_continuous(limits = c(15,46))
+
+#percentage of chrono by shift
+a = subtotplot %>% filter(shift_dic == 'control') %>% freqs(chrono)
+b = subtotplot %>% filter(shift_dic == 'night') %>% freqs(chrono)
+c = merge(a,b, by = intersect(names(a), names(b)), all = TRUE)
+c = c[-c(11:12),]
+
+chronoplot = ggplot(c, aes(x = chrono, y = p, fill = factor(shift_dic))) +
+  geom_bar(stat = "identity", position = "dodge",alpha = 0.5)  +
+  labs(
+    x = 'Chronotype',
+    y = "Percentage (%)",
+    fill = '') 
+  
+
+ggobj <- ggarrange(mort_score,cvd_pl,metabage_plot,MVPAplot,totkalplot,bmiplot, sleephrplot,chronoplot,prowh_plot, common.legend = TRUE,legend="right")
+
+table(subtot$shift_dic)
+
 
 #check corr between scores
 
@@ -57,7 +141,7 @@ qreg_50=rq(mortScore_orig~shift_sample.y,tau = c(0.5),data=kwtot4)
 qreg_75=rq(mortScore_orig~shift_sample.y,tau = c(0.75),data=kwtot4)
 ols_model = lm(mortScore_orig~shift_sample.y,data=kwtot4)
 
-ggplot(kwtot4[complete.cases(kwtot4$shift_sample.y),], aes(x = shift_sample.y, y = mortScore_orig )) +
+ggplot(kwtot4[complete.cases(kwtot4$shift_sample.y),], aes(x = shift_sample.y, y = mortScore )) +
   geom_jitter(width = 0.2, color = 'black', alpha = 0.6) + 
   geom_abline(intercept = coef(qreg_25)[1], slope = coef(qreg_25)[2], color = "red", linetype = "dashed",linewidth = 1) +
   geom_abline(intercept = coef(qreg_50)[1], slope = coef(qreg_50)[2], color = "green", linetype = "solid",linewidth = 1) +
