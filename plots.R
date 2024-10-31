@@ -16,9 +16,9 @@ kwtot4group = kwtot4_filtered %>% select(subjectid,mortScore_exp,CVD_score,
 par(mfrow = c(2,2))
 
 
-subtotplot = subtot %>% select(mortScore, MetaboAge,CVD_score,MVPA,totaalkcal,sleephr,productive_working_hours,shift_dic,
-                               bmimeasured,chrono)
-varnames = names(subtotplot)
+subtotplot = subtot %>% select(mortScore, MetaboAge,CVD_score,MVPA,totaalkcal,sleephr,shift_dic,
+                               bmimeasured,age,luxmean)
+names(subtot)
 
 
 plots = lapply(varnames[1:7],function(variable) {
@@ -43,7 +43,6 @@ mort_score = ggplot(subtotplot, aes(x = mortScore, fill = factor(shift_dic))) +
      x = 'Mortality Score',
      y = "",
      fill = '') +
-   scale_x_continuous() +
   scale_x_continuous(limits = c(-1.5,2))
 
 metabage_plot= ggplot(subtotplot, aes(x = MetaboAge, fill = factor(shift_dic))) +
@@ -54,13 +53,14 @@ metabage_plot= ggplot(subtotplot, aes(x = MetaboAge, fill = factor(shift_dic))) 
      fill = '') +
    scale_x_continuous(limits = c(28,88))
  
-prowh_plot = ggplot(subtotplot, aes(x = productive_working_hours, fill = factor(shift_dic))) +
+age_plot = ggplot(subtotplot, aes(x = age, fill = factor(shift_dic))) +
    geom_density(alpha = 0.2) +
    labs(
-     x = 'Working Hours',
+     x = 'Age',
      y = "",
      fill = '') +
-   scale_x_continuous(limits = c(13,50))
+   scale_x_continuous(limits = c(18,80))
+
 
 MVPAplot = ggplot(subtotplot, aes(x = MVPA, fill = factor(shift_dic))) +
   geom_density(alpha = 0.2) +
@@ -94,9 +94,22 @@ bmiplot = ggplot(subtotplot, aes(x = bmimeasured , fill = factor(shift_dic))) +
     fill = '') +
   scale_x_continuous(limits = c(15,46))
 
+luxplot = ggplot(subtotplot, aes(x = log2(luxmean), fill = factor(shift_dic))) +
+  geom_density(alpha = 0.2) +
+  labs(
+    x = 'Daylight exposure',
+    y = "",
+    fill = '') +
+  scale_x_continuous(limits = c(1,15))
+
+
+ggobj <- ggarrange(mort_score,cvd_pl,metabage_plot,age_plot,totkalplot,bmiplot, MVPAplot, sleephrplot,luxplot, common.legend = TRUE,legend="right")
+
+
 #percentage of chrono by shift
-a = subtotplot %>% filter(shift_dic == 'control') %>% freqs(chrono)
-b = subtotplot %>% filter(shift_dic == 'night') %>% freqs(chrono)
+a = subtot %>% filter(shift_dic == 'control') %>% freqs(chrono)
+subtot %>% filter(shift_dic == 'night') %>% freqs(koffie24.y)
+b = subtot %>% filter(shift_dic == 'night') %>% freqs(chrono)
 c = merge(a,b, by = intersect(names(a), names(b)), all = TRUE)
 c = c[-c(11:12),]
 
@@ -106,12 +119,16 @@ chronoplot = ggplot(c, aes(x = chrono, y = p, fill = factor(shift_dic))) +
     x = 'Chronotype',
     y = "Percentage (%)",
     fill = '') 
-  
 
-ggobj <- ggarrange(mort_score,cvd_pl,metabage_plot,MVPAplot,totkalplot,bmiplot, sleephrplot,chronoplot,prowh_plot, common.legend = TRUE,legend="right")
+#donuts plots
 
-table(subtot$shift_dic)
-
+ggplot(a, aes(x = 2, y = p, fill = factor(chrono))) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  xlim(c(0.5, 2.5)) +
+  theme_void() +
+  theme(legend.position = "right") +
+  labs(title = "Donut Chart Example", fill = "Chronotype")
 
 #check corr between scores
 

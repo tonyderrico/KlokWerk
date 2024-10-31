@@ -34,6 +34,7 @@ library(reshape2)
 library('tidymodels')
 library('lares')
 library(ggpubr)
+library(patchwork)
 
 
 conflict_prefer("filter", "dplyr", quiet = TRUE)
@@ -160,3 +161,4 @@ median(kwtot4$metaboage, na.rm = T)
 #replace values
 x = kwtot4 %>%
   dplyr::mutate(mortScore_orig = replace(mortScore_orig, mortScore_orig > 1.56, 0))
+

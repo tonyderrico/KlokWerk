@@ -17,18 +17,27 @@ write_csv(other_measured_factors,'C:/Users/DErr001/OneDrive - Universiteit Utrec
 df_fin = right_join(total2,todefine_nightshiftdic_17_10, by = 'sampleid')
 table(df_fin$controle.y,df_fin$controle.x.x)
 names(df_fin)[595]='shift_dic'
+df_fin$winter = as.factor(df_fin$winter)
 df_fin$MetaboAge[df_fin$MetaboAge > 87] = NA
+df_fin$chrono[df_fin$chrono==8]=4
 
 #datasets tests
-subtot = df_fin %>% select(sampleid,shift_dic,winter,sleephr,luxmean,luxmedian,
-                         minutesLAN.y,ENMO,MVPA,
+subtot = df_fin %>% select(sampleid,shift_dic,winter,sleephr,luxmean,age,
+                         MVPA,
                          chrono,
                          bmimeasured,
-                         mortScore,CVD_score,MetaboAge, alcohol24.y,koffie24.y,totaalkcal,age,productive_working_hours,
+                         mortScore,CVD_score,MetaboAge,koffie24.y,totaalkcal
                          )
+sapply(subtot,class)
 
+subtot_c = subtot %>% filter(shift_dic == 'control')
+subtot_n = subtot %>% filter(shift_dic == 'night')
 
+find_mode(subtot_c$mortScore)
+find_mode(subtot_n$mortScore)
 
+median(subtot_c$mortScore, na.rm = T)
+median(subtot_n$mortScore, na.rm = T)
 #preliminary analysis
 #Nparametrictests
 WT = wilcox.test(mortScore ~ Alcohol, data = kw_str, alternative = 'greater')

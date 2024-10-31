@@ -19,54 +19,67 @@ ggcorrplot(correl$correlations,
 
 names(subtot)
 corr.clust = hetcor(subtot[2:15])
-corr.clust1 = hetcor(subtot_c[3:15])
-corr.clust2 = hetcor(subtot_n[3:15])
+corr.clust1 = hetcor(subtot_c[3:14])
+corr.clust2 = hetcor(subtot_n[3:14])
 
 hetcor(subtot_c$winter,subtot_c$MVPA)
 corr.clust1 = as.data.frame(corr.clust1$correlations) 
-
-colnames(corr.clust$correlations) <- c("Night Shift", "Season (summer/winter time)", "Sleep Hours", "Daylight Exposure",
-                                       "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
-                                       "Alcohol (mean/24hr)", "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)", 'Age')
-
-rownames(corr.clust$correlations) <- c("Night Shift", "Season (summer/winter time)", "Sleep Hours", "Daylight Exposure",
-                                       "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
-                                       "Alcohol (mean/24hr)", "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)", 'Age')
+corr.clust2 = as.data.frame(corr.clust2$correlations) 
 
 
-colnames(corr.clust1) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure",
+colnames(corr.clust1) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
                                         "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
-                                        "Alcohol (mean/24hr)", "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)", 'Age')
-rownames(corr.clust1) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure",
-                                        "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
-                                        "Alcohol (mean/24hr)", "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)", 'Age')
+                                        "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)")
+rownames(corr.clust1) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
+                           "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
+                           "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)")
+
+colnames(corr.clust2) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
+                           "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
+                           "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)")
+rownames(corr.clust2) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
+                           "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
+                           "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)")
 
 corr.clust1[is.na(corr.clust1)] = -.6
+corr.clust1$correlations[is.na(corr.clust1$correlations)] = .6
 
-colnames(corr.clust2$correlations) <- factor(colnames(corr.clust1$correlations), levels=unique(colnames(corr.clust1$correlations)))
+colnames(corr.clust2) <- factor(colnames(corr.clust2), 
+                                             levels=unique(colnames(corr.clust2)))
 
-ggcorrplot(corr.clust1, 
+m = ggcorrplot(corr.clust1, 
            method = "square",    # Use squares for correlation      
-           lab = F,           # Add correlation values inside the squares
+           type = 'upper',           # Add correlation values inside the squares
            hc.order = F,
            colors = c("blue", "white", "red"),  # Color gradient for correlations
            title = "") 
 
-subset_values <- corr.clust1$correlations[corr.clust1$correlations < 1]
+m1 = ggcorrplot(corr.clust2, 
+           method = "square",
+           type = 'lower'
+           hc.order = F,
+           colors = c("blue", "white", "red"),  # Color gradient for correlations
+           title = "") 
 
-row_names <- rownames(corr.clust1$correlations)[row(corr.clust1$correlations)[corr.clust1$correlations < 1]]
-col_names <- colnames(corr.clust1$correlations)[col(corr.clust1$correlations)[corr.clust1$correlations < 1]] 
+combined_plot <- m + m1 + plot_layout(ncol = 2)
+combined_plot <- m + 
+  geom_tile(data = m1$data, aes("", value), inherit.aes = FALSE)
 
-subset_values <- corr.clust2$correlations[corr.clust2$correlations < 1]
+subset_values <- as.data.frame(as.table(corr.clust1$correlations))
+subset_values <- subset_values[subset_values$Freq < 1, ]
 
-row_names <- rownames(corr.clust2$correlations)[row(corr.clust2$correlations)[corr.clust2$correlations < 1]]
-col_names <- colnames(corr.clust2$correlations)[col(corr.clust2$correlations)[corr.clust2$correlations < 1]] 
+subset_values <- na.omit(subset_values)
 
-result <- data.frame(Row = row_names, Column = col_names, Correlation = subset_values)
-result = result %>% 
-  filter(Correlation < 1) %>% 
-  arrange(Correlation) %>%
-  distinct(Correlation,.keep_all = T)
+subset_values <- subset_values[order(subset_values$Freq), ]
+subset_values <- subset_values[!duplicated(subset_values$Freq), ]
+subset_values1 = as.data.frame(subset_values)
+subset_values2 = as.data.frame(subset_values)
+subset_values3 = cbind(subset_values1,subset_values2)
+
+names(subset_values3) = c('va1','var2','freq1','var3','var4','freq2')
+subset_values3$diff = subset_values3$freq1 - subset_values3$freq2
+
+write.csv(subset_values3,"O:/DGK/IRAS/EEPI/Projects/Shift Work Project/Toni-KW/prel results/corr.poster.csv")
 
 #cross ranked correlations
 corr_cross(subtot[2:15], rm.na = T, max_pvalue = 0.10, grid = T, type = 1)
