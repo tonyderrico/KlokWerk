@@ -34,7 +34,11 @@ library(reshape2)
 library('tidymodels')
 library('lares')
 library(ggpubr)
-library(patchwork)
+library(lattice)
+library('networkD3')
+library('ggalluvial')
+library('pls')
+library('vip')
 
 
 conflict_prefer("filter", "dplyr", quiet = TRUE)
@@ -162,3 +166,20 @@ median(kwtot4$metaboage, na.rm = T)
 x = kwtot4 %>%
   dplyr::mutate(mortScore_orig = replace(mortScore_orig, mortScore_orig > 1.56, 0))
 
+# Function to summarize missing values
+summarize_missing <- function(data) {
+  # Calculate the number and percentage of missing values for each variable
+  missing_summary <- data.frame(
+    Variable = colnames(data),
+    Missing_Count = sapply(data, function(x) sum(is.na(x))),
+    Missing_Percentage = sapply(data, function(x) mean(is.na(x)) * 100)
+  )
+  # Sort the results by Missing_Percentage in descending order
+  missing_summary <- missing_summary[order(-missing_summary$Missing_Percentage), ]
+  return(missing_summary)
+}
+
+# Example usage
+# Replace `your_data` with your actual dataset
+missing_info <- summarize_missing(kwtot4)
+print(missing_info)

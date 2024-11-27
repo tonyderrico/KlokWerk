@@ -18,16 +18,17 @@ ggcorrplot(correl$correlations,
 #correlation structure relevant variables
 
 names(subtot)
-corr.clust = hetcor(subtot[2:15])
-corr.clust1 = hetcor(subtot_c[3:14])
-corr.clust2 = hetcor(subtot_n[3:14])
+corr.clust = hetcor(subtot[6:15])
+corr.clust1 = hetcor(subtot_c[6:15])
+corr.clust2 = hetcor(subtot_n[6:15])
 
 hetcor(subtot_c$winter,subtot_c$MVPA)
+
 corr.clust1 = as.data.frame(corr.clust1$correlations) 
 corr.clust2 = as.data.frame(corr.clust2$correlations) 
 
 
-colnames(corr.clust1) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
+colnames(corr.clust1) <- c("Season (sumer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
                                         "Physical Activity MVPA", "Chronotype", "BMI", "Mortality Score", "CVD Score", "Metabolic Age",
                                         "Coffee (mean/24hr)", "Total caloric intake (mean/24hr)")
 rownames(corr.clust1) <- c("Season (summer/winter time)", "Sleep Hours", "Daylight Exposure", "Age",
@@ -44,6 +45,8 @@ rownames(corr.clust2) <- c("Season (summer/winter time)", "Sleep Hours", "Daylig
 corr.clust1[is.na(corr.clust1)] = -.6
 corr.clust1$correlations[is.na(corr.clust1$correlations)] = .6
 
+colnames(corr.clust1) <- factor(colnames(corr.clust1), 
+                                levels=unique(colnames(corr.clust1)))
 colnames(corr.clust2) <- factor(colnames(corr.clust2), 
                                              levels=unique(colnames(corr.clust2)))
 
@@ -56,7 +59,7 @@ m = ggcorrplot(corr.clust1,
 
 m1 = ggcorrplot(corr.clust2, 
            method = "square",
-           type = 'lower'
+           type = 'lower',
            hc.order = F,
            colors = c("blue", "white", "red"),  # Color gradient for correlations
            title = "") 

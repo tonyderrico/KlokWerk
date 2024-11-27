@@ -181,3 +181,29 @@ y_pred = predict(m1, newdata = data.frame(total_years_working_irregular_shifts =
 plot(kwtot2$total_years_working_irregular_shifts, kwtot2$CVD_score, main = "B-Spline Fit")
 lines(x_seq, y_pred, col = 'red', lwd = 2)
 
+
+# heatmaps
+#example
+names(corr.clust2)
+subset_values <- as.data.frame(as.table(corr.clust2$correlations))
+subset_values <- subset_values[subset_values$Freq < 1, ]
+subset_values <- subset_values[order(subset_values$Freq), ]
+subset_values <- subset_values[!duplicated(subset_values$Freq), ]
+
+subset_valuespl = subset_values %>% filter(Var1 %in% c('mortScore','MetaboAge','CVD_score'))
+subset_valuespl = subset_valuespl[-c(11,13,15),]
+subset_valuespl = subset_valuespl[-c(24,12,18),]
+
+subset_valuespl <- subset_valuespl[order(subset_valuespl$Var1, subset_valuespl$Var2), ]
+subset_valuespl$Var1 <- factor(subset_valuespl$Var1, levels = c('mortScore','CVD_score','MetaboAge'))
+subset_valuespl$Var2 =factor(subset_valuespl$Var2)
+subset_valuespl$Var3 = subset_valuespl$Var1
+
+
+
+ggplot(subset_valuespl, aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile() +
+  scale_fill_viridis_c(limits = c(-0.6, 0.6)) +
+  theme_minimal() +
+  ggtitle("Heatmap: Risk Scores vs Exposures")
+

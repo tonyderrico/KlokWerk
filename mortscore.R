@@ -22,15 +22,16 @@ total$controle = as.factor(total$controle)
 
 x= total %>% dplyr::filter(controle==0)
 mean(x$working_hours_contract, na.rm = T)
-m=lm(kwtot4$T2Dscore~kwtot4$weight.x)
-m=glm(kwtot4$mortScore_dic~kwheart_palpitation_problems_dic
-m=glm(kwtot4$mortScore_dic~kwtot4$shift_sample.y, family = 'binomial')
+names(subtot_c)
+m=glm(mortScore~MVPA, data=subtot_c)
 m=multinom(as.factor(kwtot4$t2diab_quart)~as.factor(kwtot4$shift_sample.y))
 m1=polr(as.factor(kwtot4$mortScore_quart1) ~ kwtot4$shift_sample.y, method = "logistic")
 m =orm(mortScore_quart1 ~ shift_sample.y ,data = kwtot4) #ordinal regression models
 m=rq(mortScore_orig~shift_sample.y,tau = c(0.1,0.25,0.5,0.75,0.9),data=kwtot4)
 m=rq(mortScore_orig~shift_sample.y,tau = 0.5,data=kwtot4)
-m=lmer(mortScore_orig~shift_sample.x + (1|subjectid), data = kwtot4)
+m=lmer(metaboage ~shift_sample.x + (1|chrono), data = kwtot4)
+a = ranef(m)
+dotplot(a)
 
 kwtot4$mortScore_orig
 exp(c(.10,0.06,.13))
@@ -77,3 +78,6 @@ table(shift_samples$shift_sample)
 xx=kwtot %>% filter(mortScore_quart == 1)
 mean(xx$productive_working_hours, na.rm = T)
 
+#stratified regressions
+m=glm(subtot_n$mortScore~subtot_n$sleephr)
+summary(m)

@@ -22,13 +22,14 @@ df_fin$MetaboAge[df_fin$MetaboAge > 87] = NA
 df_fin$chrono[df_fin$chrono==8]=4
 
 #datasets tests
-subtot = df_fin %>% select(sampleid,shift_dic,winter,sleephr,luxmean,age,
-                         MVPA,
+names(df_fin)
+subtot = df_fin %>% select(sampleid,shift_dic,winter,age,bmimeasured,sleephr,luxmean,
+                         MVPA,minutesLAN.y,alcohol24.y,totaalkcal,
                          chrono,
-                         bmimeasured,
-                         mortScore,CVD_score,MetaboAge,koffie24.y,totaalkcal
+                         mortScore,CVD_score,MetaboAge
                          )
 sapply(subtot,class)
+subtot$chrono = as.factor(subtot$chrono)
 
 subtot_c = subtot %>% filter(shift_dic == 'control')
 subtot_n = subtot %>% filter(shift_dic == 'night')
