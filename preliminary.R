@@ -179,7 +179,18 @@ summarize_missing <- function(data) {
   return(missing_summary)
 }
 
-# Example usage
 # Replace `your_data` with your actual dataset
 missing_info <- summarize_missing(kwtot4)
 print(missing_info)
+
+names(total2)
+total2$productive_working_hours
+
+af = df_fin %>% select(shift_dic,age,employment_status,country_birth,bmisr,marital_status,education,working_hours_contract,productive_working_hours,
+                       totaalkcal,MVPA,sleephr,luxmean,chrono,minutesLAN.y,minuteshighlux,minuteslowlux,minutesmediumlux,minuteslux500,
+                       alcohol24.x) %>% filter(shift_dic == 'night')
+af$shift_dic
+
+sapply(af,table, na.rm = T)
+sapply(af[c(3,4,6,7,14)], table)
+names(af)

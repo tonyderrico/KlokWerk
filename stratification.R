@@ -20,7 +20,6 @@ names(df_fin)[595]='shift_dic'
 df_fin$winter = as.factor(df_fin$winter)
 df_fin$MetaboAge[df_fin$MetaboAge > 87] = NA
 df_fin$chrono[df_fin$chrono==8]=4
-
 #datasets tests
 names(df_fin)
 subtot = df_fin %>% select(sampleid,shift_dic,winter,age,bmimeasured,sleephr,luxmean,
@@ -53,3 +52,5 @@ plot(tukey.plot.test, las = 1)
 m=glm(CVD_score~ MVPA + maand, data=a)
 summary(m)
 table(subtot$age,subtot$shift_dic)
+
+

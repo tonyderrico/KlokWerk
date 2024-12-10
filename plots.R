@@ -203,7 +203,7 @@ subset_valuespl$Var3 = subset_valuespl$Var1
 
 ggplot(subset_valuespl, aes(x = Var1, y = Var2, fill = Freq)) +
   geom_tile() +
-  scale_fill_viridis_c(limits = c(-0.6, 0.6)) +
+  scale_fill_binned(limits = c(-1, 1)) +
   theme_minimal() +
   ggtitle("Heatmap: Risk Scores vs Exposures")
 
