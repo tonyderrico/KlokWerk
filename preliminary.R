@@ -1,46 +1,10 @@
-library(psych)
-library(dplyr)
-library(car)
-library('regclass')
-library(officer)
-library('flextable')
-library(magrittr)
-library(tidyverse)
-library(MiMIR)
-library(nnet)
-library(MASS)
-library(splines) 
-library(lme4)
-library("rms")
-library('VGAM')
-library(ggplot2)
-library(quantreg)
-library(emmeans)
-library('performance')
-library('quantregGrowth')
-library(logspline)
-library("fitdistrplus")
-library(corrplot)
-library(polycor)
-library('faraway')
-library(conflicted)
-library('ggcorrplot')
-library('olsrr')
-library('ggjoy')
-library(palmerpenguins)
-library('GPArotation')
-library('pheatmap')
-library(reshape2)    
-library('tidymodels')
-library('lares')
-library(ggpubr)
-library(lattice)
-library('networkD3')
-library('ggalluvial')
-library('pls')
-library('vip')
-
-
+pacman::p_load(
+  psych, dplyr, car, regclass, officer, flextable, magrittr, tidyverse, MiMIR, nnet, 
+  MASS, splines, lme4, rms, VGAM, ggplot2, quantreg, emmeans, performance, quantregGrowth, 
+  logspline, fitdistrplus, corrplot, polycor, faraway, conflicted, ggcorrplot, olsrr, 
+  ggjoy, palmerpenguins, GPArotation, pheatmap, reshape2, lares, ggpubr, 
+  lattice, networkD3, ggalluvial, pls, vip, effectsize, ggstatsplot, cowplot, readxl,
+  robustbase, randomForest,mice)
 conflict_prefer("filter", "dplyr", quiet = TRUE)
 conflict_prefer("select", "dplyr", quiet = TRUE)
 
@@ -194,3 +158,14 @@ af$shift_dic
 sapply(af,table, na.rm = T)
 sapply(af[c(3,4,6,7,14)], table)
 names(af)
+
+x = df_fin %>% filter(shift_dic == 'control')
+df_fin$totaalkcal
+x$totaalkcal < 1800
+# i want to have the same of true > 2200
+x = ifelse(x$totaalkcal < 1800, 1,0)
+sum(x, na.rm = T)
+22/64
+3/20
+
+View(MiMIR::mort_betas)

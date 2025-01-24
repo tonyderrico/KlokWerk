@@ -41,7 +41,7 @@ m=multinom(as.factor(kwtot2$metabAge_quart)~as.factor(kwtot2$shift_sample.y))
 m=polr(kwtot2$metabAge_quart1 ~ kwtot2$shift_sample.y, method = "logistic")
 m=rq(metabAge~shift_sample.y, tau = c(0.25,0.5, 0.75),method='fn',data=kwtot2)
 m=gcrq(metabAge_log~shift_sample.y, tau = seq(0.2,0.8,l=3),data=kwtot2)
-kwtot4$shi
+
 min(kwtot4$age, na.rm = T)
 summary(m)
 confint(m)
@@ -75,3 +75,5 @@ x=car::vif(m)
 x
 summary(m)
 exp(0.046)
+
+

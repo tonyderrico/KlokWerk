@@ -207,3 +207,57 @@ ggplot(subset_valuespl, aes(x = Var1, y = Var2, fill = Freq)) +
   theme_minimal() +
   ggtitle("Heatmap: Risk Scores vs Exposures")
 
+######
+#scripts for boxplots
+#a function to have three plots in the same figure?.
+
+
+
+plot1 = ggbetweenstats(
+  data = df_fin, 
+  x = "shift_dic", 
+  y = "mortScore", 
+  plot = TRUE, 
+  conf.level = 0.95,
+  bf.message = FALSE,
+  centrality.type = 'nonparametric') + 
+  labs(
+    x = "", 
+    y = "Mortality Risk Score"
+  ) + 
+  scale_x_discrete(labels = c("Day Shift", "Night Shift")) 
+
+plot2 = ggbetweenstats(
+  data = df_fin, 
+  x = "shift_dic", 
+  y = "CVD_score", 
+  plot = TRUE, 
+  conf.level = 0.95,
+  bf.message = FALSE,
+  centrality.type = 'nonparametric'
+) + 
+  labs(
+    x = "", 
+    y = "CVD Risk Score"
+  ) + 
+  scale_x_discrete(labels = c("Day Shift", "Night Shift")) 
+
+plot3 = ggbetweenstats(
+  data = df_fin, 
+  x = "shift_dic", 
+  y = "MetaboAge", 
+  plot = TRUE, 
+  conf.level = 0.95,
+  bf.message = FALSE,
+  centrality.type = 'nonparametric'
+) + 
+  labs(
+    x = "", 
+    y = "Metabolic Age"
+  ) + 
+  scale_x_discrete(labels = c("Day Shift", "Night Shift"))
+
+
+
+plot_grid(plot1, plot2, plot3, ncol = 3)
+

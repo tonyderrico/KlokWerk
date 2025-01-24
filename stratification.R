@@ -22,7 +22,7 @@ df_fin$MetaboAge[df_fin$MetaboAge > 87] = NA
 df_fin$chrono[df_fin$chrono==8]=4
 #datasets tests
 names(df_fin)
-subtot = df_fin %>% select(sampleid,shift_dic,winter,age,bmimeasured,sleephr,luxmean,
+subtot = df_fin %>% select(sampleid,shift_dic,age,bmimeasured,sleephr,luxmean,
                          MVPA,minutesLAN.y,alcohol24.y,totaalkcal,
                          chrono,
                          mortScore,CVD_score,MetaboAge
@@ -49,8 +49,10 @@ plot(tukey.plot.test, las = 1)
 
 #[parametric tests]
 
-m=glm(CVD_score~ MVPA + maand, data=a)
+m=glm(CVD_score~minutesLAN.y , data=subtot_c)
 summary(m)
 table(subtot$age,subtot$shift_dic)
 
+#imputation for test
 
+imputed_subtot <- mice(subtot, m = 5, method = 'pmm', maxit = 50, seed = 123)

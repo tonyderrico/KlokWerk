@@ -78,6 +78,3 @@ table(shift_samples$shift_sample)
 xx=kwtot %>% filter(mortScore_quart == 1)
 mean(xx$productive_working_hours, na.rm = T)
 
-#stratified regressions
-m=glm(subtot_n$mortScore~subtot_n$sleephr)
-summary(m)
